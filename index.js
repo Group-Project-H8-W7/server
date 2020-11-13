@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios');
 const app = require('./app')
 const port = 3000
 const http = require('http').createServer(app);
@@ -31,7 +31,14 @@ io.on('connection', (socket) => {
 
 
   socket.on('disconnect', _=> {
-    console.log(socket.id);
+    // console.log(users, "dari users", 00000000000000000000000000000000000)
+    for (const key in users) {
+      // console.log(key);
+      if (users[key].id === socket.id.toString()) {
+        delete users[key]
+      }
+    }
+    // console.log(users, 'users setelah delete');
   })
   console.log('A user connected')
   socket.on('login', name => {
