@@ -11,7 +11,7 @@ const io = require('socket.io')(http, {
   }
 });
 // ============================= IO ===============================
-let users = {}
+let users = []
 
 // =========================== data ===============================
 
@@ -30,21 +30,30 @@ let users = {}
 io.on('connection', (socket) => {
 
 
-  socket.on('jawab', (data) => {
-
-  })
   socket.on('disconnect', _=> {
     console.log(socket.id);
   })
   console.log('A user connected')
   socket.on('login', name => {
-    users[name] = 0
-    users[name].id = socket.id
+    const user = {
+      name,
+      id: socket.id,
+      score: 0
+    }
+    users.push(user)
+    console.log(name, users.name, users)
     io.emit('LOGIN', name)
   })
   socket.on('refresh', _=> {
     io.emit('REFRESH', users)
   })
+
+  socket.on('setFinalScore', score => {
+    const user = users.find(el => el.id === socket.id)
+    user.score = score
+    console.log(user)
+  })
+
   socket.on('start', _=> {
     axios.get('https://opentdb.com/api.php?amount=10')
       .then(({ data }) => {
